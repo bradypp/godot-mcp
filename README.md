@@ -195,41 +195,6 @@ Create `.cursor/mcp.json` in your project root:
 | `DEBUG`          | Enable detailed logging          | `false`       | `true`            |
 | `READ_ONLY_MODE` | Restrict to read-only operations | `false`       | `true`            |
 
-### Platform-Specific Examples
-
-#### Windows
-
-```json
-{
-  "env": {
-    "GODOT_PATH": "C:\\Program Files\\Godot\\godot.exe",
-    "DEBUG": "true"
-  }
-}
-```
-
-#### macOS
-
-```json
-{
-  "env": {
-    "GODOT_PATH": "/Applications/Godot.app/Contents/MacOS/Godot",
-    "DEBUG": "true"
-  }
-}
-```
-
-#### Linux
-
-```json
-{
-  "env": {
-    "GODOT_PATH": "/usr/bin/godot4",
-    "DEBUG": "true"
-  }
-}
-```
-
 ## API Reference
 
 ### System Tools
