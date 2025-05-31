@@ -10,59 +10,115 @@
 [![](https://img.shields.io/github/forks/bradypp/godot-mcp 'Forks')](https://github.com/bradypp/godot-mcp/network/members)
 [![](https://img.shields.io/badge/License-MIT-red.svg 'MIT License')](https://opensource.org/licenses/MIT)
 
-A Model Context Protocol (MCP) server for interacting with the Godot game engine.
+**A comprehensive Model Context Protocol (MCP) server for seamless AI assistant integration with the Godot game engine.**
 
-## Introduction
+## Table of Contents
 
-Godot MCP enables AI assistants to launch the Godot editor, run projects, capture debug output, and control project execution - all through a standardized interface.
+- [What is Godot MCP?](#what-is-godot-mcp)
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [API Reference](#api-reference)
+- [Project Architecture](#project-architecture)
+- [Usage Examples](#usage-examples)
+- [Read-Only Mode](#read-only-mode)
+- [Troubleshooting](#troubleshooting)
+- [FAQ](#faq)
+- [Contributing](#contributing)
+- [License](#license)
 
-This direct feedback loop helps AI assistants like Claude or Cursor understand what works and what doesn't in real Godot projects, leading to better code generation and debugging assistance.
+## What is Godot MCP?
+
+Godot MCP bridges the gap between AI assistants and the Godot game engine by providing a standardized Model Context Protocol interface. This powerful integration enables AI assistants like Claude, Cursor, and Cline to directly interact with Godot projects through a comprehensive set of tools.
+
+### Key Value Propositions
+
+- **Direct Godot Integration**: Launch editors, run projects, and capture debug output programmatically
+- **Scene Management**: Create, modify, and manage Godot scenes through AI commands
+- **Real-time Feedback**: AI assistants can see actual Godot output and errors for better assistance
+- **Cross-platform Compatibility**: Works seamlessly on Windows, macOS, and Linux
+- **Secure Operations**: Optional read-only mode for safe project analysis
+- **Zero Configuration**: Automatic Godot detection with manual override options
+
+### How It Works
+
+The server acts as a middleware layer between your AI assistant and Godot, translating natural language commands into specific Godot operations. When you ask your AI to "create a player scene with a sprite," the MCP server:
+
+1. Validates the request and project structure
+2. Executes the appropriate Godot operations
+3. Returns detailed success/error feedback
+4. Enables the AI to understand and respond to the results
+
+This creates a powerful feedback loop where AI assistants can learn from actual Godot behavior, leading to more accurate code generation and debugging assistance.
 
 ## Features
 
-- **Launch Godot Editor**: Open the Godot editor for a specific project
-- **Run Godot Projects**: Execute Godot projects in debug mode
-- **Capture Debug Output**: Retrieve console output and error messages
-- **Control Execution**: Start and stop Godot projects programmatically
-- **Get Godot Version**: Retrieve the installed Godot version
-- **List Godot Projects**: Find Godot projects in a specified directory
-- **Project Analysis**: Get detailed information about project structure
-- **Scene Management**:
-  - Create new scenes with specified root node types
-  - Add nodes to existing scenes with customizable properties
-  - Edit properties of existing nodes in scenes
-  - Remove nodes from existing scenes
-  - Load sprites and textures into Sprite2D nodes
-  - Export 3D scenes as MeshLibrary resources for GridMap
-  - Save scenes with options for creating variants
-- **UID Management** (for Godot 4.4+):
-  - Get UID for specific files
-  - Update UID references by resaving resources
+### Core Project Management
+
+- **🚀 Launch Godot Editor**: Open the Godot editor for specific projects
+- **▶️ Run Godot Projects**: Execute projects in debug mode with real-time output capture
+- **🛑 Control Execution**: Start and stop Godot projects programmatically
+- **📊 Debug Output Capture**: Retrieve comprehensive console output and error messages
+- **ℹ️ System Information**: Get installed Godot version and project metadata
+- **📁 Project Discovery**: Find and list Godot projects in specified directories
+
+### Advanced Scene Management
+
+- **🎬 Create New Scenes**: Generate scenes with specified root node types
+- **➕ Add Nodes**: Insert nodes into existing scenes with customizable properties
+- **✏️ Edit Node Properties**: Modify positions, scales, textures, and other node attributes
+- **🗑️ Remove Nodes**: Clean up scenes by removing unwanted nodes
+- **🖼️ Load Sprites**: Automatically load textures into Sprite2D nodes
+- **🧱 Export MeshLibrary**: Convert 3D scenes to MeshLibrary resources for GridMap
+- **💾 Save Scene Variants**: Create scene copies and manage scene versions
+
+### Godot 4.4+ UID Management
+
+- **🔗 Get File UIDs**: Retrieve unique identifiers for project resources
+- **🔄 Update UID References**: Maintain proper resource links during project upgrades
+
+### Security & Safety
+
+- **🔒 Read-Only Mode**: Restrict operations to analysis-only for secure environments
+- **✅ Path Validation**: Comprehensive project and file path verification
+- **🛡️ Error Handling**: Robust error reporting with actionable suggestions
 
 ## Requirements
 
-- [Godot Engine](https://godotengine.org/download) installed on your system
-- Node.js and npm
-- An AI assistant that supports MCP (Cline, Cursor, etc.)
+### System Requirements
 
-## Installation and Configuration
+- **Godot Engine**: Version 3.5+ or 4.0+ (latest stable recommended)
+- **Node.js & npm**
 
-### Step 1: Install and Build
+### AI Assistant Compatibility
 
-First, clone the repository and build the MCP server:
+- **Cline & Roo Code**: Full support with auto-approval configuration
+- **Cursor & VS Code**: Supports both UI and project-specific configuration
+- **Claude Desktop**: Compatible with MCP server integration
+- **Other MCP-enabled tools**: Any tool supporting the Model Context Protocol
+
+## Installation
+
+### Clone and Build
 
 ```bash
+# Clone the repository
 git clone https://github.com/bradypp/godot-mcp.git
 cd godot-mcp
+
+# Install dependencies
 npm install
+
+# Build the project
 npm run build
 ```
 
-### Step 2: Configure with Your AI Assistant
+## Configuration
 
-#### Option A: Configure with Cline
+### Option A: Cline Configuration
 
-Add to your Cline MCP settings file (`~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json`):
+Add to your Cline MCP settings file:
 
 ```json
 {
@@ -71,8 +127,9 @@ Add to your Cline MCP settings file (`~/Library/Application Support/Code/User/gl
       "command": "node",
       "args": ["/absolute/path/to/godot-mcp/build/index.js"],
       "env": {
-        "DEBUG": "true", // Optional: Enable detailed logging
-        "GODOT_PATH": "/path/to/godot" // Required if non-default installation path
+        "DEBUG": "false",
+        "READ_ONLY": "false",
+        "GODOT_PATH": "/path/to/godot"
       },
       "disabled": false,
       "autoApprove": [
@@ -98,22 +155,21 @@ Add to your Cline MCP settings file (`~/Library/Application Support/Code/User/gl
 }
 ```
 
-#### Option B: Configure with Cursor
+### Option B: Cursor Configuration
 
-**Using the Cursor UI:**
+#### UI Configuration
 
-1. Go to **Cursor Settings** > **Features** > **MCP**
-2. Click on the **+ Add New MCP Server** button
-3. Fill out the form:
-   - Name: `godot` (or any name you prefer)
-   - Type: `command`
-   - Command: `node /absolute/path/to/godot-mcp/build/index.js`
-4. Click "Add"
-5. You may need to press the refresh button in the top right corner of the MCP server card to populate the tool list
+1. Open **Cursor Settings** → **Features** → **MCP**
+2. Click **+ Add New MCP Server**
+3. Configure:
+   - **Name**: `godot`
+   - **Type**: `command`
+   - **Command**: `node /absolute/path/to/godot-mcp/build/index.js`
+4. Click **Add** and refresh the server list
 
-**Using Project-Specific Configuration:**
+#### Project-Specific Configuration
 
-Create a file at `.cursor/mcp.json` in your project directory with the following content:
+Create `.cursor/mcp.json` in your project root:
 
 ```json
 {
@@ -122,34 +178,395 @@ Create a file at `.cursor/mcp.json` in your project directory with the following
       "command": "node",
       "args": ["/absolute/path/to/godot-mcp/build/index.js"],
       "env": {
-        "DEBUG": "true", // Enable detailed logging
-        "GODOT_PATH": "path/to/godot" // Required if non-default installation path
+        "DEBUG": "false",
+        "GODOT_PATH": "/path/to/godot",
+        "READ_ONLY_MODE": "false"
       }
     }
   }
 }
 ```
 
-### Step 3: Optional Environment Variables
+### Environment Variables
 
-You can customize the server behavior with these environment variables:
+| Variable         | Description                      | Default       | Example           |
+| ---------------- | -------------------------------- | ------------- | ----------------- |
+| `GODOT_PATH`     | Path to Godot executable         | Auto-detected | `/usr/bin/godot4` |
+| `DEBUG`          | Enable detailed logging          | `false`       | `true`            |
+| `READ_ONLY_MODE` | Restrict to read-only operations | `false`       | `true`            |
 
-- `GODOT_PATH`: Path to the Godot executable (overrides automatic detection)
-- `DEBUG`: Set to "true" to enable detailed server-side debug logging
-- `READ_ONLY_MODE`: Set to "true" to enable read-only mode (see below for details)
+### Platform-Specific Examples
+
+#### Windows
+
+```json
+{
+  "env": {
+    "GODOT_PATH": "C:\\Program Files\\Godot\\godot.exe",
+    "DEBUG": "true"
+  }
+}
+```
+
+#### macOS
+
+```json
+{
+  "env": {
+    "GODOT_PATH": "/Applications/Godot.app/Contents/MacOS/Godot",
+    "DEBUG": "true"
+  }
+}
+```
+
+#### Linux
+
+```json
+{
+  "env": {
+    "GODOT_PATH": "/usr/bin/godot4",
+    "DEBUG": "true"
+  }
+}
+```
+
+## API Reference
+
+### System Tools
+
+#### `get_godot_version`
+
+Get the installed Godot version information.
+
+**Parameters**: None
+
+**Example Response**:
+
+```json
+{
+  "version": "4.2.1.stable",
+  "platform": "linux.x86_64"
+}
+```
+
+### Project Tools
+
+#### `launch_editor`
+
+Launch the Godot editor for a specific project.
+
+**Parameters**:
+
+- `projectPath` (string, required): Path to the Godot project directory
+
+**Example**:
+
+```javascript
+{
+  "projectPath": "/home/user/my-game"
+}
+```
+
+#### `run_project`
+
+Execute a Godot project and capture output.
+
+**Parameters**:
+
+- `projectPath` (string, required): Path to the Godot project directory
+- `scene` (string, optional): Specific scene to run
+
+**Example**:
+
+```javascript
+{
+  "projectPath": "/home/user/my-game",
+  "scene": "scenes/MainMenu.tscn"
+}
+```
+
+#### `list_projects`
+
+Find Godot projects in a specified directory.
+
+**Parameters**:
+
+- `directory` (string, required): Directory to search for projects
+- `recursive` (boolean, optional): Whether to search recursively (default: false)
+
+#### `get_project_info`
+
+Retrieve detailed metadata about a Godot project.
+
+**Parameters**:
+
+- `projectPath` (string, required): Path to the Godot project directory
+
+**Example Response**:
+
+```json
+{
+  "name": "My Awesome Game",
+  "path": "/home/user/my-awesome-game",
+  "godotVersion": "4.2.1.stable.official",
+  "structure": {
+    "scenes": 12,
+    "scripts": 8,
+    "assets": 45,
+    "other": 3
+  }
+}
+```
+
+### Scene Management Tools
+
+#### `create_scene`
+
+Create a new scene in a Godot project.
+
+**Parameters**:
+
+- `projectPath` (string, required): Path to the Godot project directory
+- `scenePath` (string, required): Path for the new scene file (relative to project)
+- `rootNodeType` (string, optional): Type of the root node (default: "Node2D")
+
+**Example**:
+
+```javascript
+{
+  "projectPath": "/home/user/my-game",
+  "scenePath": "scenes/Player.tscn",
+  "rootNodeType": "CharacterBody2D"
+}
+```
+
+#### `add_node`
+
+Add a node to an existing scene.
+
+**Parameters**:
+
+- `projectPath` (string, required): Path to the Godot project directory
+- `scenePath` (string, required): Path to the scene file (relative to project)
+- `nodeType` (string, required): Type of node to add (e.g., "Sprite2D", "CollisionShape2D")
+- `nodeName` (string, required): Name for the new node
+- `parentNodePath` (string, optional): Path to parent node (defaults to root)
+- `properties` (object, optional): Additional properties to set
+
+**Example**:
+
+```javascript
+{
+  "projectPath": "/home/user/my-game",
+  "scenePath": "scenes/Player.tscn",
+  "nodeType": "Sprite2D",
+  "nodeName": "PlayerSprite",
+  "properties": {
+    "position": { "x": 100, "y": 50 },
+    "scale": { "x": 2.0, "y": 2.0 }
+  }
+}
+```
+
+#### `edit_node`
+
+Edit properties of an existing node in a scene.
+
+**Parameters**:
+
+- `projectPath` (string, required): Path to the Godot project directory
+- `scenePath` (string, required): Path to the scene file (relative to project)
+- `nodePath` (string, required): Path to the node to edit
+- `properties` (object, required): Properties to update
+
+**Example**:
+
+```javascript
+{
+  "projectPath": "/home/user/my-game",
+  "scenePath": "scenes/Player.tscn",
+  "nodePath": "PlayerSprite",
+  "properties": {
+    "position": { "x": 200, "y": 100 },
+    "modulate": { "r": 1.0, "g": 0.5, "b": 0.5, "a": 1.0 }
+  }
+}
+```
+
+#### `remove_node`
+
+Remove a node from a scene.
+
+**Parameters**:
+
+- `projectPath` (string, required): Path to the Godot project directory
+- `scenePath` (string, required): Path to the scene file (relative to project)
+- `nodePath` (string, required): Path to the node to remove
+
+#### `load_sprite`
+
+Load a texture into a Sprite2D node.
+
+**Parameters**:
+
+- `projectPath` (string, required): Path to the Godot project directory
+- `scenePath` (string, required): Path to the scene file (relative to project)
+- `nodePath` (string, required): Path to the Sprite2D node
+- `texturePath` (string, required): Path to the texture file (relative to project)
+
+#### `save_scene`
+
+Save a scene, optionally as a new variant.
+
+**Parameters**:
+
+- `projectPath` (string, required): Path to the Godot project directory
+- `scenePath` (string, required): Path to the scene file (relative to project)
+- `newPath` (string, optional): New path to save as variant
+
+### Debug Tools
+
+#### `get_debug_output`
+
+Retrieve current debug output and errors from running projects.
+
+**Parameters**: None
+
+#### `stop_project`
+
+Stop any currently running Godot project.
+
+**Parameters**: None
+
+### UID Tools (Godot 4.4+)
+
+#### `get_uid`
+
+Get the UID for a specific file in a Godot project.
+
+**Parameters**:
+
+- `projectPath` (string, required): Path to the Godot project directory
+- `filePath` (string, required): Path to the file (relative to project)
+
+#### `update_project_uids`
+
+Update UID references in a project by resaving resources.
+
+**Parameters**:
+
+- `projectPath` (string, required): Path to the Godot project directory
+
+## Project Architecture
+
+### Core Components
+
+The Godot MCP server follows a modular architecture designed for maintainability and extensibility:
+
+```
+src/
+├── config/           # Configuration management
+├── core/            # Core functionality
+│   ├── GodotExecutor.ts      # Godot command execution
+│   ├── PathManager.ts        # Path detection and validation
+│   ├── ProcessManager.ts     # Process lifecycle management
+│   └── ParameterNormalizer.ts # Input parameter handling
+├── server/          # MCP server implementation
+│   ├── GodotMCPServer.ts     # Main server class
+│   └── types.ts              # Type definitions
+├── tools/           # Tool implementations
+│   ├── BaseToolHandler.ts    # Shared tool functionality
+│   ├── ToolRegistry.ts       # Tool registration and filtering
+│   ├── debug/               # Debug-related tools
+│   ├── project/             # Project management tools
+│   ├── scene/               # Scene manipulation tools
+│   ├── system/              # System information tools
+│   └── uid/                 # UID management tools
+├── utils/           # Utility functions
+└── scripts/         # Godot operation scripts
+```
+
+### Key Design Principles
+
+1. **Modular Tool System**: Each tool is self-contained with its own definition and handler
+2. **Centralized Configuration**: Environment variables and settings managed in one location
+3. **Robust Error Handling**: Comprehensive error reporting with actionable suggestions
+4. **Security First**: Read-only mode and input validation protect against misuse
+5. **Cross-platform Support**: Platform-agnostic design with OS-specific handling where needed
+
+### Tool Registration System
+
+Tools are registered in the [`ToolRegistry`](src/tools/ToolRegistry.ts:47) with metadata indicating their capabilities:
+
+```typescript
+export interface ToolRegistration {
+  definition: ToolDefinition;
+  handler: (args: any) => Promise<ToolResponse>;
+  readOnly: boolean;
+}
+```
+
+The registry automatically filters tools based on the current mode (read-only vs. full access) and provides a unified interface for tool discovery and execution.
+
+### Bundled Operations Architecture
+
+Complex Godot operations use a centralized GDScript approach:
+
+1. **Single Script File**: All operations consolidated in [`godot_operations.gd`](src/scripts/godot_operations.gd:1)
+2. **JSON Parameter Passing**: Operations receive structured parameters
+3. **No Temporary Files**: Eliminates file system overhead and cleanup complexity
+4. **Consistent Error Handling**: Standardized error reporting across all operations
+
+This architecture provides better performance, maintainability, and reliability compared to generating temporary scripts for each operation.
+
+## Usage Examples
+
+### Basic Project Workflow
+
+```text
+"Launch the Godot editor for my project at /path/to/my-game"
+
+"Run my Godot project and show me any errors"
+
+"Get information about my project structure and settings"
+```
+
+### Scene Creation and Management
+
+```text
+"Create a new Player scene with a CharacterBody2D root node"
+
+"Add a Sprite2D node called 'PlayerSprite' to my Player scene"
+
+"Load the character texture 'textures/player.png' into the PlayerSprite node"
+
+"Set the Player's position to (100, 50) and scale to 2x"
+
+"Create a CollisionShape2D node as a child of the Player root"
+```
+
+### Advanced Workflows
+
+```text
+"Create a complete UI scene with buttons for Start Game, Settings, and Quit"
+
+"Export my 3D level models as a MeshLibrary for use with GridMap"
+
+"Analyze my project structure and suggest performance improvements"
+
+"Debug this GDScript error and help me fix the character controller"
+
+"Create a save system scene with file I/O nodes and data management"
+```
 
 ## Read-Only Mode
 
-The Godot MCP server supports a read-only mode that restricts certain operations for use in secure or controlled environments. When enabled, the server only allows read-only operations for debug, system, and project tools while maintaining full functionality for scene and UID tools.
+Read-only mode provides a secure way to analyze Godot projects without making any modifications. This is ideal for CI/CD pipelines, code reviews, educational environments, and shared development scenarios.
 
 ### Enabling Read-Only Mode
 
 Set the `READ_ONLY_MODE` environment variable to `"true"`:
 
-**Environment Variable:**
-
-**In MCP Configuration:**
-
 ```json
 {
   "mcpServers": {
@@ -157,146 +574,245 @@ Set the `READ_ONLY_MODE` environment variable to `"true"`:
       "command": "node",
       "args": ["/absolute/path/to/godot-mcp/build/index.js"],
       "env": {
-        "READ_ONLY_MODE": "true",
-        "DEBUG": "true",
-        "GODOT_PATH": "/path/to/godot"
+        "READ_ONLY_MODE": "true"
       }
     }
   }
 }
 ```
 
-### Available Tools in Read-Only Mode
+### Available vs. Restricted Tools
 
-When `READ_ONLY_MODE` is enabled, the following restrictions apply:
+#### ✅ Available in Read-Only Mode
 
-#### ✅ **Available Read-Only Tools:**
+**System Tools**:
 
-- **System Tools:**
-  - [`get_godot_version`](src/tools/system/GetGodotVersionTool.ts:1) - Get the installed Godot version
-- **Debug Tools:**
-  - [`get_debug_output`](src/tools/debug/GetDebugOutputTool.ts:1) - Get current debug output and errors
-- **Project Tools:**
-  - [`list_projects`](src/tools/project/ListProjectsTool.ts:1) - List Godot projects in a directory
-  - [`get_project_info`](src/tools/project/GetProjectInfoTool.ts:1) - Retrieve project metadata
-- **UID Tools:**
-  - [`get_uid`](src/tools/uid/GetUidTool.ts:1) - Get UID for specific files (Godot 4.4+)
+- [`get_godot_version`](src/tools/system/GetGodotVersionTool.ts:18): Get Godot version information
 
-#### ❌ **Restricted Tools:**
+**Project Tools**:
 
-- **System Tools:** _(none - all system tools are read-only)_
-- **Debug Tools:**
-  - `stop_project` - Stop running Godot projects
-- **Project Tools:**
-  - `launch_editor` - Launch Godot editor
-  - `run_project` - Run Godot projects
-- **UID Tools:**
-  - `update_project_uids` - Update UID references
+- [`launch_editor`](src/tools/project/LaunchEditorTool.ts:18): Launch Godot editor
+- [`run_project`](src/tools/project/RunProjectTool.ts:18): Run projects to analyze behavior
+- [`list_projects`](src/tools/project/ListProjectsTool.ts:18): Discover projects in directories
+- [`get_project_info`](src/tools/project/GetProjectInfoTool.ts:18): Retrieve project metadata
 
-#### 🔄 **Unrestricted Categories:**
+**Debug Tools**:
 
-**Scene Tools** and **UID Tools** (except `update_project_uids`) remain **fully available** regardless of read-only mode:
+- [`get_debug_output`](src/tools/debug/GetDebugOutputTool.ts:18): Capture console output
+- [`stop_project`](src/tools/debug/StopProjectTool.ts:18): Stop running projects
 
-- `create_scene`, `add_node`, `edit_node`, `remove_node`
-- `load_sprite`, `export_mesh_library`, `save_scene`
+**UID Tools**:
 
-### Use Cases for Read-Only Mode
+- [`get_uid`](src/tools/uid/GetUidTool.ts:18): Get file UIDs (Godot 4.4+)
 
-- **CI/CD Pipelines**: Analyze projects without modifying them
-- **Code Review**: Inspect project structure and debug output safely
-- **Educational Environments**: Allow students to explore without making changes
-- **Shared Development**: Multiple users can safely analyze the same project
-- **Documentation Generation**: Extract project information for documentation
+#### ❌ Restricted in Read-Only Mode
 
-### Example Usage
+**Scene Modification Tools**:
 
-```bash
-# Run server in read-only mode
-READ_ONLY_MODE=true node /path/to/godot-mcp/build/index.js
+- `create_scene`: Create new scenes
+- `add_node`: Add nodes to scenes
+- `edit_node`: Modify node properties
+- `remove_node`: Remove nodes from scenes
+- `load_sprite`: Load textures into nodes
+- `export_mesh_library`: Export MeshLibrary resources
+- `save_scene`: Save scene modifications
 
-# Or export the variable
-export READ_ONLY_MODE=true
-node /path/to/godot-mcp/build/index.js
-```
+**UID Modification Tools**:
 
-With read-only mode enabled, you can still use prompts like:
+- `update_project_uids`: Update UID references
 
-```text
-"Get information about my Godot project structure"
-"Show me any debug output from my project"
-"List all Godot projects in this directory"
-"Get the UID for this script file"
-"Create a new scene with a Player node" (still works - scene tools unaffected)
-```
+### Use Cases
 
-## Example Prompts
-
-Once configured, your AI assistant will automatically run the MCP server when needed. You can use prompts like:
-
-```text
-"Launch the Godot editor for my project at /path/to/project"
-
-"Run my Godot project and show me any errors"
-
-"Get information about my Godot project structure"
-
-"Analyze my Godot project structure and suggest improvements"
-
-"Help me debug this error in my Godot project: [paste error]"
-
-"Write a GDScript for a character controller with double jump and wall sliding"
-
-"Create a new scene with a Player node in my Godot project"
-
-"Add a Sprite2D node to my player scene and load the character texture"
-
-"Edit the position and scale properties of the Player node in my scene"
-
-"Remove the old enemy node from my level scene"
-
-"Export my 3D models as a MeshLibrary for use with GridMap"
-
-"Create a UI scene with buttons and labels for my game's main menu"
-
-"Get the UID for a specific script file in my Godot 4.4 project"
-
-"Update UID references in my Godot project after upgrading to 4.4"
-```
-
-## Implementation Details
-
-### Architecture
-
-The Godot MCP server uses a bundled GDScript approach for complex operations:
-
-1. **Direct Commands**: Simple operations like launching the editor or getting project info use Godot's built-in CLI commands directly.
-2. **Bundled Operations Script**: Complex operations like creating scenes or adding nodes use a single, comprehensive GDScript file (`godot_operations.gd`) that handles all operations.
-
-This architecture provides several benefits:
-
-- **No Temporary Files**: Eliminates the need for temporary script files, keeping your system clean
-- **Simplified Codebase**: Centralizes all Godot operations in one (somewhat) organized file
-- **Better Maintainability**: Makes it easier to add new operations or modify existing ones
-- **Improved Error Handling**: Provides consistent error reporting across all operations
-- **Reduced Overhead**: Minimizes file I/O operations for better performance
-
-The bundled script accepts operation type and parameters as JSON, allowing for flexible and dynamic operation execution without generating temporary files for each operation.
+- **🔄 CI/CD Pipelines**: Automated project analysis without risk of modification
+- **👥 Code Reviews**: Safe project inspection for team collaboration
+- **📊 Documentation**: Extract project information for automated documentation
+- **🔍 Debugging**: Analyze project behavior without modification risk
 
 ## Troubleshooting
 
-- **Godot Not Found**: Set the GODOT_PATH environment variable to your Godot executable
-- **Connection Issues**: Ensure the server is running and restart your AI assistant
-- **Invalid Project Path**: Ensure the path points to a directory containing a project.godot file
-- **Build Issues**: Make sure all dependencies are installed by running `npm install`
-- **For Cursor Specifically**:
-- Ensure the MCP server shows up and is enabled in Cursor settings (Settings > MCP)
-- MCP tools can only be run using the Agent chat profile (Cursor Pro or Business subscription)
-- Use "Yolo Mode" to automatically run MCP tool requests
+### Common Issues and Solutions
+
+#### Godot Not Found
+
+**Error**: `Could not find a valid Godot executable path`
+
+**Solutions**:
+
+1. **Set GODOT_PATH environment variable**:
+
+   ```bash
+   export GODOT_PATH="/path/to/godot"
+   # or for Windows:
+   set GODOT_PATH="C:\Program Files\Godot\godot.exe"
+   ```
+
+2. **Verify Godot installation**:
+
+   ```bash
+   # Test if Godot is accessible
+   godot --version
+   # or try:
+   godot4 --version
+   ```
+
+3. **Common Godot paths**:
+   - **Windows**: `C:\Program Files\Godot\godot.exe`
+   - **macOS**: `/Applications/Godot.app/Contents/MacOS/Godot`
+   - **Linux**: `/usr/bin/godot4` or `/usr/local/bin/godot`
+
+#### Connection Issues
+
+**Error**: MCP server not responding or tools not available
+
+**Solutions**:
+
+1. **Restart your AI assistant** after configuration changes
+2. **Check server logs** by enabling debug mode: `"DEBUG": "true"`
+3. **Verify configuration path** is absolute and correct
+4. **Test server manually**:
+   ```bash
+   node /path/to/godot-mcp/build/index.js
+   ```
+
+#### Invalid Project Path
+
+**Error**: `Invalid project path` or `project.godot not found`
+
+**Solutions**:
+
+1. **Ensure path contains project.godot**:
+   ```bash
+   ls /path/to/project/project.godot
+   ```
+2. **Use absolute paths** when possible
+3. **Check file permissions** on the project directory
+
+#### Build Issues
+
+**Error**: Build fails or dependencies missing
+
+**Solutions**:
+
+1. **Clean and rebuild**:
+
+   ```bash
+   npm run clean
+   npm install
+   npm run build
+   ```
+
+2. **Clear npm cache**:
+   ```bash
+   npm cache clean --force
+   ```
+
+### Getting Help
+
+If you encounter issues not covered here:
+
+1. **Check debug logs** with `DEBUG=true`
+2. **Search existing issues** on GitHub
+3. **Create a detailed issue report** with:
+   - Operating system and version
+   - Node.js and Godot versions
+   - Complete error messages
+   - Configuration used
+   - Steps to reproduce
+
+## FAQ
+
+### General Questions
+
+**Q: What versions of Godot are supported?**
+A: Godot 3.5+ and all Godot 4.x versions. Some features (like UID management) require Godot 4.4+.
+
+**Q: Can I use this with Godot 3.x projects?**
+A: Yes, most features work with Godot 3.5+. Scene management and project operations are fully supported.
+
+**Q: Is this safe to use on production projects?**
+A: Yes, especially with read-only mode enabled. The server includes comprehensive validation and error handling.
+
+### Technical Questions
+
+**Q: How does the server detect my Godot installation?**
+A: The server checks common installation paths for each platform. You can override detection with the `GODOT_PATH` environment variable.
+
+**Q: Can I run multiple instances of the server?**
+A: Yes, each instance operates independently. Useful for working with multiple projects simultaneously.
+
+**Q: What happens if Godot crashes during an operation?**
+A: The server detects process failures and returns appropriate error messages with suggestions for resolution.
+
+**Q: Are temporary files created during operations?**
+A: No, the server uses a bundled GDScript approach that avoids temporary file creation for better performance and security.
+
+### AI Assistant Integration
+
+**Q: Which AI assistants work with this server?**
+A: Any AI assistant supporting the Model Context Protocol, including Cline, Roo Code, Cursor, VS Code, Claude Desktop, and others.
+
+**Q: Can I customize which tools are available?**
+A: Yes, through the autoApprove configuration or by modifying the tool registry for custom builds.
+
+**Q: How do I know if the integration is working?**
+A: The AI assistant should be able to list available tools and execute them. Enable debug mode to see detailed operation logs.
+
+### Development Questions
+
+**Q: Can I add custom tools to the server?**
+A: Yes, the modular architecture makes it easy to add new tools. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for development guidelines.
+
+**Q: How do I contribute to the project?**
+A: Fork the repository, make your changes, and submit a pull request. Please follow the existing code style and include tests.
+
+**Q: Is the server extensible for other game engines?**
+A: The MCP architecture is engine-agnostic, but this implementation is specifically designed for Godot. Similar servers could be created for other engines.
+
+## Contributing
+
+We welcome contributions to improve Godot MCP! Please see our [`CONTRIBUTING.md`](CONTRIBUTING.md) guide for:
+
+- Development setup instructions
+- Code style guidelines
+- Testing procedures
+- Pull request process
+- Issue reporting guidelines
+
+### Quick Start for Contributors
+
+```bash
+# Fork and clone the repository
+git clone https://github.com/your-username/godot-mcp.git
+cd godot-mcp
+
+# Install dependencies
+npm install
+
+# Start development mode
+npm run dev
+
+# Run tests
+npm test
+
+# Build for production
+npm run build
+```
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [`LICENSE`](LICENSE) file for details.
 
 ## Credits
 
-This repo was originally forked from https://github.com/Coding-Solo/godot-mcp
+This project was originally forked from [Coding-Solo/godot-mcp](https://github.com/Coding-Solo/godot-mcp).
+
+## Support
+
+- **🐛 Bug Reports**: [GitHub Issues](https://github.com/bradypp/godot-mcp/issues)
+- **💡 Feature Requests**: [GitHub Discussions](https://github.com/bradypp/godot-mcp/discussions)
+- **📖 Documentation**: This README and inline code documentation
+- **💬 Community**: Join discussions about Godot MCP and AI-assisted development
+
+---
+
+**Built with ❤️ for the Godot and AI development communities**

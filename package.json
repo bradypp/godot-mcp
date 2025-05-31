@@ -14,7 +14,6 @@
     "prebuild": "npm run clean",
     "build": "tsc && node scripts/build.js",
     "test": "npm run build && node build/test/test.js",
-    "watch": "tsc --watch",
     "dev": "nodemon --watch src --ext ts --exec \"npm run build\"",
     "inspector": "npx @modelcontextprotocol/inspector build/index.js"
   },
@@ -33,7 +32,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Coding-Solo/godot-mcp.git"
+    "url": "https://github.com/bradypp/godot-mcp.git"
   },
   "keywords": [
     "godot",

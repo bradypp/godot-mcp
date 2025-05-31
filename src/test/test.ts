@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Comprehensive test script for the Godot MCP Server
- * Validates that the implementation works correctly 
+ * Validates that the implementation works correctly
  */
 
 import { GodotMCPServer } from '../server/GodotMCPServer';
@@ -45,6 +45,8 @@ const runTests = async (): Promise<void> => {
       // Scene tools
       'create_scene',
       'add_node',
+      'edit_node',
+      'remove_node',
       'load_sprite',
       'export_mesh_library',
       'save_scene',
@@ -150,7 +152,7 @@ const runTests = async (): Promise<void> => {
 
     // Test 6: Tool Count Verification (should match original exactly)
     logInfo('Test 6: Tool Count Verification');
-    const expectedToolCount = 14; // Based on original implementation analysis
+    const expectedToolCount = expectedTools.length; // Based on original implementation analysis
     if (toolDefinitions.length !== expectedToolCount) {
       logError(
         `✗ Tool count mismatch: expected ${expectedToolCount}, found ${toolDefinitions.length}`,
