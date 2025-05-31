@@ -136,6 +136,98 @@ You can customize the server behavior with these environment variables:
 
 - `GODOT_PATH`: Path to the Godot executable (overrides automatic detection)
 - `DEBUG`: Set to "true" to enable detailed server-side debug logging
+- `READ_ONLY_MODE`: Set to "true" to enable read-only mode (see below for details)
+
+## Read-Only Mode
+
+The Godot MCP server supports a read-only mode that restricts certain operations for use in secure or controlled environments. When enabled, the server only allows read-only operations for debug, system, and project tools while maintaining full functionality for scene and UID tools.
+
+### Enabling Read-Only Mode
+
+Set the `READ_ONLY_MODE` environment variable to `"true"`:
+
+**Environment Variable:**
+
+**In MCP Configuration:**
+
+```json
+{
+  "mcpServers": {
+    "godot": {
+      "command": "node",
+      "args": ["/absolute/path/to/godot-mcp/build/index.js"],
+      "env": {
+        "READ_ONLY_MODE": "true",
+        "DEBUG": "true",
+        "GODOT_PATH": "/path/to/godot"
+      }
+    }
+  }
+}
+```
+
+### Available Tools in Read-Only Mode
+
+When `READ_ONLY_MODE` is enabled, the following restrictions apply:
+
+#### ✅ **Available Read-Only Tools:**
+
+- **System Tools:**
+  - [`get_godot_version`](src/tools/system/GetGodotVersionTool.ts:1) - Get the installed Godot version
+- **Debug Tools:**
+  - [`get_debug_output`](src/tools/debug/GetDebugOutputTool.ts:1) - Get current debug output and errors
+- **Project Tools:**
+  - [`list_projects`](src/tools/project/ListProjectsTool.ts:1) - List Godot projects in a directory
+  - [`get_project_info`](src/tools/project/GetProjectInfoTool.ts:1) - Retrieve project metadata
+- **UID Tools:**
+  - [`get_uid`](src/tools/uid/GetUidTool.ts:1) - Get UID for specific files (Godot 4.4+)
+
+#### ❌ **Restricted Tools:**
+
+- **System Tools:** _(none - all system tools are read-only)_
+- **Debug Tools:**
+  - `stop_project` - Stop running Godot projects
+- **Project Tools:**
+  - `launch_editor` - Launch Godot editor
+  - `run_project` - Run Godot projects
+- **UID Tools:**
+  - `update_project_uids` - Update UID references
+
+#### 🔄 **Unrestricted Categories:**
+
+**Scene Tools** and **UID Tools** (except `update_project_uids`) remain **fully available** regardless of read-only mode:
+
+- `create_scene`, `add_node`, `edit_node`, `remove_node`
+- `load_sprite`, `export_mesh_library`, `save_scene`
+
+### Use Cases for Read-Only Mode
+
+- **CI/CD Pipelines**: Analyze projects without modifying them
+- **Code Review**: Inspect project structure and debug output safely
+- **Educational Environments**: Allow students to explore without making changes
+- **Shared Development**: Multiple users can safely analyze the same project
+- **Documentation Generation**: Extract project information for documentation
+
+### Example Usage
+
+```bash
+# Run server in read-only mode
+READ_ONLY_MODE=true node /path/to/godot-mcp/build/index.js
+
+# Or export the variable
+export READ_ONLY_MODE=true
+node /path/to/godot-mcp/build/index.js
+```
+
+With read-only mode enabled, you can still use prompts like:
+
+```text
+"Get information about my Godot project structure"
+"Show me any debug output from my project"
+"List all Godot projects in this directory"
+"Get the UID for this script file"
+"Create a new scene with a Player node" (still works - scene tools unaffected)
+```
 
 ## Example Prompts
 

@@ -4,6 +4,7 @@
  */
 
 import { ToolDefinition, ToolResponse } from '../server/types';
+import { READ_ONLY_MODE } from '../config/config';
 
 // System tools
 import { getGodotVersionDefinition, handleGetGodotVersion } from './system/GetGodotVersionTool';
@@ -37,6 +38,7 @@ import { updateProjectUidsDefinition, handleUpdateProjectUids } from './uid/Upda
 export interface ToolRegistration {
   definition: ToolDefinition;
   handler: (args: any) => Promise<ToolResponse>;
+  readOnly: boolean;
 }
 
 /**
@@ -44,43 +46,161 @@ export interface ToolRegistration {
  */
 export const toolRegistry: Map<string, ToolRegistration> = new Map([
   // System tools
-  ['get_godot_version', { definition: getGodotVersionDefinition, handler: handleGetGodotVersion }],
+  [
+    'get_godot_version',
+    {
+      definition: getGodotVersionDefinition,
+      handler: handleGetGodotVersion,
+      readOnly: true,
+    },
+  ],
 
   // Debug tools
-  ['stop_project', { definition: stopProjectDefinition, handler: handleStopProject }],
-  ['get_debug_output', { definition: getDebugOutputDefinition, handler: handleGetDebugOutput }],
+  [
+    'stop_project',
+    {
+      definition: stopProjectDefinition,
+      handler: handleStopProject,
+      readOnly: true,
+    },
+  ],
+  [
+    'get_debug_output',
+    {
+      definition: getDebugOutputDefinition,
+      handler: handleGetDebugOutput,
+      readOnly: true,
+    },
+  ],
 
   // Project tools
-  ['launch_editor', { definition: launchEditorDefinition, handler: handleLaunchEditor }],
-  ['run_project', { definition: runProjectDefinition, handler: handleRunProject }],
-  ['list_projects', { definition: listProjectsDefinition, handler: handleListProjects }],
-  ['get_project_info', { definition: getProjectInfoDefinition, handler: handleGetProjectInfo }],
+  [
+    'launch_editor',
+    {
+      definition: launchEditorDefinition,
+      handler: handleLaunchEditor,
+      readOnly: true,
+    },
+  ],
+  [
+    'run_project',
+    {
+      definition: runProjectDefinition,
+      handler: handleRunProject,
+      readOnly: true,
+    },
+  ],
+  [
+    'list_projects',
+    {
+      definition: listProjectsDefinition,
+      handler: handleListProjects,
+      readOnly: true,
+    },
+  ],
+  [
+    'get_project_info',
+    {
+      definition: getProjectInfoDefinition,
+      handler: handleGetProjectInfo,
+      readOnly: true,
+    },
+  ],
 
   // Scene tools
-  ['create_scene', { definition: createSceneDefinition, handler: handleCreateScene }],
-  ['add_node', { definition: addNodeDefinition, handler: handleAddNode }],
-  ['edit_node', { definition: editNodeDefinition, handler: handleEditNode }],
-  ['remove_node', { definition: removeNodeDefinition, handler: handleRemoveNode }],
-  ['load_sprite', { definition: loadSpriteDefinition, handler: handleLoadSprite }],
+  [
+    'create_scene',
+    {
+      definition: createSceneDefinition,
+      handler: handleCreateScene,
+      readOnly: false,
+    },
+  ],
+  [
+    'add_node',
+    {
+      definition: addNodeDefinition,
+      handler: handleAddNode,
+      readOnly: false,
+    },
+  ],
+  [
+    'edit_node',
+    {
+      definition: editNodeDefinition,
+      handler: handleEditNode,
+      readOnly: false,
+    },
+  ],
+  [
+    'remove_node',
+    {
+      definition: removeNodeDefinition,
+      handler: handleRemoveNode,
+      readOnly: false,
+    },
+  ],
+  [
+    'load_sprite',
+    {
+      definition: loadSpriteDefinition,
+      handler: handleLoadSprite,
+      readOnly: false,
+    },
+  ],
   [
     'export_mesh_library',
-    { definition: exportMeshLibraryDefinition, handler: handleExportMeshLibrary },
+    {
+      definition: exportMeshLibraryDefinition,
+      handler: handleExportMeshLibrary,
+      readOnly: false,
+    },
   ],
-  ['save_scene', { definition: saveSceneDefinition, handler: handleSaveScene }],
+  [
+    'save_scene',
+    {
+      definition: saveSceneDefinition,
+      handler: handleSaveScene,
+      readOnly: false,
+    },
+  ],
 
   // UID tools
-  ['get_uid', { definition: getUidDefinition, handler: handleGetUid }],
+  [
+    'get_uid',
+    {
+      definition: getUidDefinition,
+      handler: handleGetUid,
+      readOnly: true,
+    },
+  ],
   [
     'update_project_uids',
-    { definition: updateProjectUidsDefinition, handler: handleUpdateProjectUids },
+    {
+      definition: updateProjectUidsDefinition,
+      handler: handleUpdateProjectUids,
+      readOnly: false,
+    },
   ],
 ]);
 
 /**
  * Get all tool definitions for MCP server registration
+ * Filters tools based on READ_ONLY_MODE
  */
 export const getAllToolDefinitions = (): ToolDefinition[] => {
-  return Array.from(toolRegistry.values()).map((tool) => tool.definition);
+  const allTools = Array.from(toolRegistry.values());
+
+  if (!READ_ONLY_MODE) {
+    return allTools.map((tool) => tool.definition);
+  }
+
+  // In read-only mode, filter out tools that are not read-only
+  const filteredTools = allTools.filter((tool) => tool.readOnly);
+
+  console.log(`[READ_ONLY_MODE] Filtered ${allTools.length - filteredTools.length} write tools`);
+
+  return filteredTools.map((tool) => tool.definition);
 };
 
 /**
