@@ -21,6 +21,8 @@ import { getProjectInfoDefinition, handleGetProjectInfo } from './project/GetPro
 // Scene tools
 import { createSceneDefinition, handleCreateScene } from './scene/CreateSceneTool';
 import { addNodeDefinition, handleAddNode } from './scene/AddNodeTool';
+import { editNodeDefinition, handleEditNode } from './scene/EditNodeTool';
+import { removeNodeDefinition, handleRemoveNode } from './scene/RemoveNodeTool';
 import { loadSpriteDefinition, handleLoadSprite } from './scene/LoadSpriteTool';
 import {
   exportMeshLibraryDefinition,
@@ -57,6 +59,8 @@ export const toolRegistry: Map<string, ToolRegistration> = new Map([
   // Scene tools
   ['create_scene', { definition: createSceneDefinition, handler: handleCreateScene }],
   ['add_node', { definition: addNodeDefinition, handler: handleAddNode }],
+  ['edit_node', { definition: editNodeDefinition, handler: handleEditNode }],
+  ['remove_node', { definition: removeNodeDefinition, handler: handleRemoveNode }],
   ['load_sprite', { definition: loadSpriteDefinition, handler: handleLoadSprite }],
   [
     'export_mesh_library',

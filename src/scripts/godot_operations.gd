@@ -61,6 +61,10 @@ func _init():
             create_scene(params)
         "add_node":
             add_node(params)
+        "edit_node":
+            edit_node(params)
+        "remove_node":
+            remove_node(params)
         "load_sprite":
             load_sprite(params)
         "export_mesh_library":
@@ -560,6 +564,179 @@ func add_node(params):
             printerr("Failed to save scene: " + str(save_error))
     else:
         printerr("Failed to pack scene: " + str(result))
+
+# Edit properties of an existing node in a scene
+func edit_node(params):
+    print("Editing node in scene: " + params.scene_path)
+    
+    var full_scene_path = params.scene_path
+    if not full_scene_path.begins_with("res://"):
+        full_scene_path = "res://" + full_scene_path
+    if debug_mode:
+        print("Scene path (with res://): " + full_scene_path)
+    
+    var absolute_scene_path = ProjectSettings.globalize_path(full_scene_path)
+    if debug_mode:
+        print("Absolute scene path: " + absolute_scene_path)
+    
+    if not FileAccess.file_exists(absolute_scene_path):
+        printerr("Scene file does not exist at: " + absolute_scene_path)
+        quit(1)
+    
+    var scene = load(full_scene_path)
+    if not scene:
+        printerr("Failed to load scene: " + full_scene_path)
+        quit(1)
+    
+    if debug_mode:
+        print("Scene loaded successfully")
+    var scene_root = scene.instantiate()
+    if debug_mode:
+        print("Scene instantiated")
+    
+    # Get the node path to edit
+    var node_path = params.node_path
+    if debug_mode:
+        print("Node path: " + node_path)
+    
+    var target_node = scene_root
+    if node_path != "root":
+        target_node = scene_root.get_node(node_path.replace("root/", ""))
+        if not target_node:
+            printerr("Target node not found: " + node_path)
+            quit(1)
+    if debug_mode:
+        print("Target node found: " + target_node.name)
+    
+    # Update node properties
+    if params.has("properties"):
+        if debug_mode:
+            print("Setting properties on node")
+        var properties = params.properties
+        for property in properties:
+            if debug_mode:
+                print("Setting property: " + property + " = " + str(properties[property]))
+            target_node.set(property, properties[property])
+    else:
+        if debug_mode:
+            print("No properties specified to update")
+    
+    var packed_scene = PackedScene.new()
+    var result = packed_scene.pack(scene_root)
+    if debug_mode:
+        print("Pack result: " + str(result) + " (OK=" + str(OK) + ")")
+    
+    if result == OK:
+        if debug_mode:
+            print("Saving scene to: " + absolute_scene_path)
+        var save_error = ResourceSaver.save(packed_scene, absolute_scene_path)
+        if debug_mode:
+            print("Save result: " + str(save_error) + " (OK=" + str(OK) + ")")
+        if save_error == OK:
+            if debug_mode:
+                var file_check_after = FileAccess.file_exists(absolute_scene_path)
+                print("File exists check after save: " + str(file_check_after))
+                if file_check_after:
+                    print("Node '" + node_path + "' properties updated successfully")
+                else:
+                    printerr("File reported as saved but does not exist at: " + absolute_scene_path)
+            else:
+                print("Node '" + node_path + "' properties updated successfully")
+        else:
+            printerr("Failed to save scene: " + str(save_error))
+            quit(1)
+    else:
+        printerr("Failed to pack scene: " + str(result))
+        quit(1)
+
+# Remove a node from an existing scene
+func remove_node(params):
+    print("Removing node from scene: " + params.scene_path)
+    
+    var full_scene_path = params.scene_path
+    if not full_scene_path.begins_with("res://"):
+        full_scene_path = "res://" + full_scene_path
+    if debug_mode:
+        print("Scene path (with res://): " + full_scene_path)
+    
+    var absolute_scene_path = ProjectSettings.globalize_path(full_scene_path)
+    if debug_mode:
+        print("Absolute scene path: " + absolute_scene_path)
+    
+    if not FileAccess.file_exists(absolute_scene_path):
+        printerr("Scene file does not exist at: " + absolute_scene_path)
+        quit(1)
+    
+    var scene = load(full_scene_path)
+    if not scene:
+        printerr("Failed to load scene: " + full_scene_path)
+        quit(1)
+    
+    if debug_mode:
+        print("Scene loaded successfully")
+    var scene_root = scene.instantiate()
+    if debug_mode:
+        print("Scene instantiated")
+    
+    # Get the node path to remove
+    var node_path = params.node_path
+    if debug_mode:
+        print("Node path: " + node_path)
+    
+    # Cannot remove the root node
+    if node_path == "root":
+        printerr("Cannot remove the root node")
+        quit(1)
+    
+    var target_node = scene_root.get_node(node_path.replace("root/", ""))
+    if not target_node:
+        printerr("Target node not found: " + node_path)
+        quit(1)
+    
+    if debug_mode:
+        print("Target node found: " + target_node.name)
+    
+    # Get the parent node to remove the child from
+    var parent_node = target_node.get_parent()
+    if not parent_node:
+        printerr("Target node has no parent: " + node_path)
+        quit(1)
+    
+    if debug_mode:
+        print("Parent node: " + parent_node.name)
+        print("Removing node from parent")
+    
+    # Remove the node from its parent
+    parent_node.remove_child(target_node)
+    target_node.queue_free()
+    
+    var packed_scene = PackedScene.new()
+    var result = packed_scene.pack(scene_root)
+    if debug_mode:
+        print("Pack result: " + str(result) + " (OK=" + str(OK) + ")")
+    
+    if result == OK:
+        if debug_mode:
+            print("Saving scene to: " + absolute_scene_path)
+        var save_error = ResourceSaver.save(packed_scene, absolute_scene_path)
+        if debug_mode:
+            print("Save result: " + str(save_error) + " (OK=" + str(OK) + ")")
+        if save_error == OK:
+            if debug_mode:
+                var file_check_after = FileAccess.file_exists(absolute_scene_path)
+                print("File exists check after save: " + str(file_check_after))
+                if file_check_after:
+                    print("Node '" + node_path + "' removed successfully")
+                else:
+                    printerr("File reported as saved but does not exist at: " + absolute_scene_path)
+            else:
+                print("Node '" + node_path + "' removed successfully")
+        else:
+            printerr("Failed to save scene: " + str(save_error))
+            quit(1)
+    else:
+        printerr("Failed to pack scene: " + str(result))
+        quit(1)
 
 # Load a sprite into a Sprite2D node
 func load_sprite(params):
