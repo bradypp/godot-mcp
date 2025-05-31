@@ -16,7 +16,7 @@ A Model Context Protocol (MCP) server for interacting with the Godot game engine
 
 Godot MCP enables AI assistants to launch the Godot editor, run projects, capture debug output, and control project execution - all through a standardized interface.
 
-This direct feedback loop helps AI assistants like Claude understand what works and what doesn't in real Godot projects, leading to better code generation and debugging assistance.
+This direct feedback loop helps AI assistants like Claude or Cursor understand what works and what doesn't in real Godot projects, leading to better code generation and debugging assistance.
 
 ## Features
 
@@ -30,6 +30,8 @@ This direct feedback loop helps AI assistants like Claude understand what works 
 - **Scene Management**:
   - Create new scenes with specified root node types
   - Add nodes to existing scenes with customizable properties
+  - Edit properties of existing nodes in scenes
+  - Remove nodes from existing scenes
   - Load sprites and textures into Sprite2D nodes
   - Export 3D scenes as MeshLibrary resources for GridMap
   - Save scenes with options for creating variants
@@ -83,6 +85,8 @@ Add to your Cline MCP settings file (`~/Library/Application Support/Code/User/gl
         "get_project_info",
         "create_scene",
         "add_node",
+        "edit_node",
+        "remove_node",
         "load_sprite",
         "export_mesh_library",
         "save_scene",
@@ -154,6 +158,10 @@ Once configured, your AI assistant will automatically run the MCP server when ne
 
 "Add a Sprite2D node to my player scene and load the character texture"
 
+"Edit the position and scale properties of the Player node in my scene"
+
+"Remove the old enemy node from my level scene"
+
 "Export my 3D models as a MeshLibrary for use with GridMap"
 
 "Create a UI scene with buttons and labels for my game's main menu"
@@ -196,3 +204,7 @@ The bundled script accepts operation type and parameters as JSON, allowing for f
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Credits
+
+This repo was originally forked from https://github.com/Coding-Solo/godot-mcp
