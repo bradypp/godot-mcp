@@ -64,8 +64,8 @@ export const executeOperation = async (
   try {
     // Serialize the snake_case parameters to a valid JSON string
     const paramsJson = JSON.stringify(snakeCaseParams);
-    // Escape single quotes in the JSON string to prevent command injection
-    const escapedParams = paramsJson.replace(/'/g, "'\\''");
+    // Escape double quotes and backslashes for shell safety
+    const escapedParams = paramsJson.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 
     // Add debug arguments if debug mode is enabled
     const debugArgs = GODOT_DEBUG_MODE ? ['--debug-godot'] : [];
@@ -82,7 +82,7 @@ export const executeOperation = async (
       '--script',
       `"${operationsScriptPath}"`,
       operation,
-      `'${escapedParams}'`,
+      `"${escapedParams}"`,
       ...debugArgs,
     ].join(' ');
 
