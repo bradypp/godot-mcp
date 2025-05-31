@@ -552,23 +552,23 @@ Set the `READ_ONLY_MODE` environment variable to `"true"`:
 
 **System Tools**:
 
-- [`get_godot_version`](src/tools/system/GetGodotVersionTool.ts:18): Get Godot version information
+- `get_godot_version`: Get Godot version information
 
 **Project Tools**:
 
-- [`launch_editor`](src/tools/project/LaunchEditorTool.ts:18): Launch Godot editor
-- [`run_project`](src/tools/project/RunProjectTool.ts:18): Run projects to analyze behavior
-- [`list_projects`](src/tools/project/ListProjectsTool.ts:18): Discover projects in directories
-- [`get_project_info`](src/tools/project/GetProjectInfoTool.ts:18): Retrieve project metadata
+- `launch_editor`: Launch Godot editor
+- `run_project`: Run projects to analyze behavior
+- `list_projects`: Discover projects in directories
+- `get_project_info`: Retrieve project metadata
 
 **Debug Tools**:
 
-- [`get_debug_output`](src/tools/debug/GetDebugOutputTool.ts:18): Capture console output
-- [`stop_project`](src/tools/debug/StopProjectTool.ts:18): Stop running projects
+- `get_debug_output`: Capture console output
+- `stop_project`: Stop running projects
 
 **UID Tools**:
 
-- [`get_uid`](src/tools/uid/GetUidTool.ts:18): Get file UIDs (Godot 4.4+)
+- `get_uid`: Get file UIDs (Godot 4.4+)
 
 #### ❌ Restricted in Read-Only Mode
 
